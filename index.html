@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#f472b6"/><meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="WEAR"/><title>WEAR</title>
+<link rel="manifest" href="manifest.json"/><link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}body{font-family:'Playfair Display',serif;background:#f5f0f0}
+#app{height:100vh;overflow:hidden;position:relative}
+:root{--pk:#f9a8d4;--pkm:#f472b6;--pkl:#fce7f3;--pu:#a855f7;--pul:#ede9fe;--bg:#f5f0f0}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;transform:translateX(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);will-change:transform;-ms-overflow-style:none;scrollbar-width:none}
+.screen::-webkit-scrollbar,.grid::-webkit-scrollbar,.plist::-webkit-scrollbar{display:none}
+.screen.active{transform:translateX(0)}.screen.exit-left{transform:translateX(-40%)}
+#lo{position:fixed;inset:0;background:var(--pk);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .4s}
+#lo.fo{opacity:0;pointer-events:none}
+.ldots{display:flex;gap:8px;margin-top:20px}.ldots span{width:10px;height:10px;border-radius:50%;background:white;animation:dbc 1.2s ease-in-out infinite}
+.ldots span:nth-child(2){animation-delay:.2s}.ldots span:nth-child(3){animation-delay:.4s}
+#splash{background:var(--pk);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.lw{animation:float 3s ease-in-out infinite;margin-bottom:8px}
+.btxt{letter-spacing:14px;font-size:30px;font-weight:700;color:white;margin-bottom:28px}
+.tpill{background:rgba(255,255,255,.28);border-radius:30px;padding:13px 28px;color:white;font-size:15px;font-style:italic;backdrop-filter:blur(6px);margin-bottom:48px;text-align:center;max-width:82%}
+.bstart{background:white;color:var(--pkm);border:none;border-radius:30px;padding:16px 56px;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 8px 28px rgba(244,114,182,.4);transition:transform .18s}
+.bstart:active{transform:scale(.96)}
+.gbtn{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.3);border:none;border-radius:50%;width:48px;height:48px;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center}
+#login,#register{background:var(--pu);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto}
+.atop{width:100%;background:var(--pk);border-radius:0 0 28px 28px;padding:28px 20px 24px;display:flex;flex-direction:column;align-items:center;margin-bottom:28px}
+.abrand{letter-spacing:12px;font-size:26px;font-weight:700;color:white;margin:10px 0 6px}
+.asub{color:rgba(255,255,255,.85);font-size:15px;font-style:italic}
+.acard{background:white;border-radius:24px;padding:28px 24px;width:calc(100% - 40px);margin:0 20px 20px;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.acard h2{font-size:22px;font-weight:700;color:#444;margin-bottom:22px}
+.af{margin-bottom:14px}.af label{display:block;font-size:12px;color:#aaa;font-weight:600;margin-bottom:5px}
+.af input{width:100%;border:2px solid var(--pkl);border-radius:14px;padding:12px 16px;font-size:15px;font-family:inherit;outline:none;transition:border-color .2s;color:#333}
+.af input:focus{border-color:var(--pk)}
+.bamain{width:100%;background:linear-gradient(135deg,var(--pkm),var(--pu));color:white;border:none;border-radius:30px;padding:16px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px;transition:transform .18s}
+.bamain:active{transform:scale(.97)}.bamain:disabled{opacity:.6;cursor:not-allowed}
+.adiv{display:flex;align-items:center;gap:12px;margin:18px 0}
+.adiv::before,.adiv::after{content:'';flex:1;height:1px;background:#f0e8f0}
+.adiv span{color:#bbb;font-size:13px}
+.bgoog{width:100%;background:white;border:2px solid #e8e0f0;border-radius:30px;padding:13px 16px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;color:#444;transition:border-color .2s,transform .18s}
+.bgoog:active{transform:scale(.97)}.bgoog:disabled{opacity:.6;cursor:not-allowed}
+.gi{width:20px;height:20px}
+.aswitch{text-align:center;margin-top:18px;color:#bbb;font-size:14px}
+.aswitch a{color:var(--pu);font-weight:700;cursor:pointer;text-decoration:none}
+.aerr{background:#fff0f6;border:1.5px solid var(--pk);border-radius:12px;padding:10px 14px;color:#d946ef;font-size:13px;margin-bottom:14px;display:none}
+.aerr.show{display:block}
+.flnk{text-align:right;margin-top:-8px;margin-bottom:14px}.flnk a{color:#c084fc;font-size:12px;cursor:pointer}
+.hbar{background:var(--pk);border-radius:0 0 22px 22px;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:10}
+.hbtn{background:white;border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:14px;color:#d946ef;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.hbtn:active{transform:scale(.9)}.hbar h1{font-family:inherit;font-size:19px;color:white;font-weight:700;margin-left:6px;flex:1}
+#home{background:var(--bg);display:flex;flex-direction:column}
+.hhdr{background:var(--pk);border-radius:0 0 24px 24px;padding:16px 16px 20px;flex-shrink:0}
+.htop{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.hbrnd{display:flex;align-items:center;gap:8px}
+.hbrnd span{letter-spacing:6px;font-size:18px;font-weight:700;color:white}
+.hrgt{display:flex;align-items:center;gap:8px}
+.hgear{background:rgba(255,255,255,.3);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:16px}
+.sbar{background:white;border-radius:24px;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.sbar input{border:none;outline:none;font-size:15px;color:#888;width:100%;font-family:inherit;background:transparent}
+.uav{width:34px;height:34px;border-radius:50%;background:white;border:2px solid rgba(255,255,255,.6);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;flex-shrink:0}
+.uav img{width:100%;height:100%;object-fit:cover}
+.htabs{display:flex;padding:12px 14px 0;flex-shrink:0}
+.htab{flex:1;background:white;border:none;cursor:pointer;padding:10px 6px;font-family:inherit;font-size:12px;font-weight:700;color:#bbb;border-radius:14px 14px 0 0;transition:all .2s;border-bottom:3px solid transparent}
+.htab.active{color:var(--pkm);border-bottom-color:var(--pkm)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:10px 14px 90px;overflow-y:auto;flex:1;-ms-overflow-style:none;scrollbar-width:none}
+.card{background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.07);cursor:pointer;transition:transform .2s}
+.card:active{transform:translateY(-3px)}
+.cimg{height:120px;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden}
+.cbdg{position:absolute;top:8px;right:8px;border-radius:20px;padding:3px 8px;font-size:10px;font-weight:700;color:white}
+.bsell{background:var(--pu)}.bdon{background:var(--pkm)}
+.cbdy{padding:10px 12px}
+.ctit{font-size:13px;font-weight:700;color:#555;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cftr{display:flex;justify-content:space-between;align-items:center}
+.cprc{color:var(--pkm);font-weight:700;font-size:14px}
+.ctags{display:flex;gap:3px}
+.tag{background:var(--pul);color:var(--pu);border-radius:8px;padding:2px 7px;font-size:10px;font-weight:700}
+.cusr{font-size:11px;color:#bbb;margin-top:4px}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:2px solid var(--pkl);display:flex;justify-content:space-around;padding:8px 0 max(12px,env(safe-area-inset-bottom));z-index:20}
+.nbtn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:inherit;padding:0 6px;transition:transform .15s}
+.nbtn:active{transform:scale(.9)}.nbtn .ni{font-size:20px}.nbtn .nl{font-size:10px;font-weight:600}
+.nbtn.active .nl{color:var(--pkm)}.nbtn.inactive .nl{color:#aaa}
+/* SELL */
+#sell{background:var(--bg);display:flex;flex-direction:column}
+.sbody{padding:14px 16px 100px;display:flex;flex-direction:column}
+.ssec{background:white;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.sstit{font-size:11px;font-weight:700;color:var(--pu);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.fw{margin-bottom:12px}
+.fl{font-size:12px;color:#aaa;font-weight:600;display:block;margin-bottom:5px}
+.fi,.fta,.fsel{width:100%;border:2px solid var(--pkl);border-radius:14px;padding:10px 13px;font-size:14px;outline:none;font-family:inherit;background:white;transition:border-color .2s;color:#333;-webkit-appearance:none}
+.fi:focus,.fta:focus,.fsel:focus{border-color:var(--pk)}
+.fta{resize:none;height:75px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.upz{border:2px dashed var(--pkl);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;background:#fafafa}
+.upz:hover{border-color:var(--pkm);background:var(--pkl)}
+.upi{font-size:32px;margin-bottom:6px}.upt{font-size:12px;color:#aaa}
+.ipg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.ith{aspect-ratio:1;border-radius:10px;overflow:hidden;position:relative;background:#f0eaf0}
+.ith img{width:100%;height:100%;object-fit:cover}
+.ith .di{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.55);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cpills{display:flex;gap:6px;flex-wrap:wrap}
+.cpill{border:2px solid var(--pkl);border-radius:20px;padding:6px 13px;font-size:12px;font-weight:700;cursor:pointer;color:#aaa;background:white;transition:all .2s;font-family:inherit}
+.cpill.sel{border-color:var(--pkm);color:var(--pkm);background:var(--pkl)}
+.schips{display:flex;gap:5px;flex-wrap:wrap}
+.sch{border:2px solid var(--pul);border-radius:10px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;color:#aaa;background:white;transition:all .2s;font-family:inherit}
+.sch.sel{border-color:var(--pu);color:var(--pu);background:var(--pul)}
+.bpub{width:100%;background:linear-gradient(135deg,var(--pkm),var(--pu));color:white;border:none;border-radius:30px;padding:16px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(244,114,182,.35);transition:transform .18s;margin-top:4px}
+.bpub:active{transform:scale(.97)}.bpub:disabled{opacity:.6;cursor:not-allowed}
+/* DONATE */
+#donate{background:var(--bg);display:flex;flex-direction:column}
+.dbody{padding:14px 18px 100px;display:flex;flex-direction:column}
+.pbar{display:flex;gap:8px;margin-bottom:22px}
+.ps{flex:1;height:6px;border-radius:3px;transition:background .3s}
+.ps.done{background:var(--pkm)}.ps.todo{background:#e5e7eb}
+.stit{font-size:20px;font-weight:700;color:#444;margin-bottom:18px}
+.ccard{background:white;border-radius:18px;padding:18px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.crow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--pkl)}
+.crow:last-child{border-bottom:none}
+.ckey{color:#aaa;font-size:13px}.cval{color:#444;font-weight:700;font-size:13px;max-width:55%;text-align:right}
+.bprim{width:100%;margin-top:22px;background:linear-gradient(135deg,var(--pkm),var(--pu));color:white;border:none;border-radius:30px;padding:17px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(244,114,182,.35);transition:transform .18s}
+.bprim:active{transform:scale(.97)}
+/* MAP */
+#mapscreen{background:var(--bg);display:flex;flex-direction:column}
+.mctrl{display:flex;gap:8px;padding:10px 14px}
+.mfbtn{flex:1;border:2px solid var(--pkl);border-radius:20px;padding:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:white;color:#888;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.mfbtn.on{background:var(--pul);border-color:var(--pu);color:var(--pu)}
+.mfbtn.on-pk{background:var(--pkl);border-color:var(--pkm);color:var(--pkm)}
+.bapin{background:linear-gradient(135deg,var(--pkm),var(--pu));color:white;border:none;border-radius:18px;padding:8px 14px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.mcon{flex:0 0 280px;position:relative;margin:0 14px 10px;border-radius:18px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.1)}
+.mbg{width:100%;height:280px;background:linear-gradient(145deg,#d4ecf7,#e8f4ee);position:relative;overflow:hidden}
+.mgh{position:absolute;left:0;right:0;height:1px;background:rgba(255,255,255,.55)}
+.mgv{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.55)}
+.mslbl{position:absolute;font-size:9px;color:#8aaccf;font-style:italic}
+.mpin{position:absolute;transform:translate(-50%,-100%);cursor:pointer;transition:transform .2s;z-index:2}
+.mpin:hover{transform:translate(-50%,-110%)}
+.pb{border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.pb-drop{background:var(--pu);box-shadow:0 3px 10px rgba(168,85,247,.5)}
+.pb-store{background:var(--pkm);box-shadow:0 3px 10px rgba(244,114,182,.5)}
+.pt{width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;margin:0 auto}
+.pt-drop{border-top:9px solid var(--pu)}.pt-store{border-top:9px solid var(--pkm)}
+.plbl{background:white;border-radius:8px;padding:2px 7px;font-size:9px;font-weight:700;color:#444;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.1);margin-top:3px;white-space:nowrap;max-width:85px;overflow:hidden;text-overflow:ellipsis}
+.plist{padding:0 14px 90px;overflow-y:auto;flex:1;-ms-overflow-style:none;scrollbar-width:none}
+.pitm{background:white;border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.05);cursor:pointer;transition:transform .15s}
+.pitm:active{transform:scale(.98)}
+.pio{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pin-i{flex:1}
+.pnm{font-size:13px;font-weight:700;color:#333}
+.pad{font-size:11px;color:#aaa;margin-top:2px}
+.pbdg{font-size:10px;font-weight:700;border-radius:10px;padding:2px 8px}
+.bdrop{background:var(--pul);color:var(--pu)}.bstore{background:var(--pkl);color:var(--pkm)}
+/* MODAL */
+.movl{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.movl.hidden{display:none}
+.msheet{background:white;border-radius:24px 24px 0 0;padding:22px 22px 36px;width:100%;max-width:520px;animation:su .3s ease;position:relative}
+.mhnd{width:40px;height:4px;background:#e5e7eb;border-radius:2px;margin:0 auto 18px}
+.mtit{font-size:19px;font-weight:700;color:#333;margin-bottom:18px}
+.mclose{position:absolute;top:14px;right:14px;background:var(--pkl);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.ttog{display:flex;gap:8px;margin-bottom:14px}
+.tbtn{flex:1;border:2px solid var(--pkl);border-radius:13px;padding:10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:white;color:#aaa;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.tbtn.sp{border-color:var(--pu);color:var(--pu);background:var(--pul)}
+.tbtn.spk{border-color:var(--pkm);color:var(--pkm);background:var(--pkl)}
+.bmsave{width:100%;background:linear-gradient(135deg,var(--pkm),var(--pu));color:white;border:none;border-radius:30px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:14px}
+/* DETAIL */
+#detail{background:var(--bg);display:flex;flex-direction:column}
+.dimg{height:240px;background:var(--pkl);display:flex;align-items:center;justify-content:center;font-size:80px;flex-shrink:0;overflow:hidden}
+.dimg img{width:100%;height:100%;object-fit:cover}
+.dbdy{padding:16px 18px 100px;overflow-y:auto}
+.dtit{font-size:21px;font-weight:700;color:#333;margin-bottom:6px}
+.dprc{font-size:26px;font-weight:700;color:var(--pkm);margin-bottom:12px}
+.dslr{display:flex;align-items:center;gap:10px;background:white;border-radius:14px;padding:12px 14px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.sav{width:36px;height:36px;border-radius:50%;background:var(--pkl);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--pkm);font-size:14px;overflow:hidden;flex-shrink:0}
+.si strong{display:block;font-size:13px;color:#333}.si span{font-size:11px;color:#aaa}
+.ddesc{font-size:14px;color:#666;line-height:1.6;margin-bottom:14px}
+.dtr{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.dtag{background:var(--pul);color:var(--pu);border-radius:18px;padding:4px 12px;font-size:11px;font-weight:700}
+.dtag.pk{background:var(--pkl);color:var(--pkm)}
+.bcnt{width:100%;background:linear-gradient(135deg,var(--pkm),var(--pu));color:white;border:none;border-radius:30px;padding:17px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 8px 24px rgba(244,114,182,.35)}
+/* PROFILE */
+#profile{background:var(--bg);display:flex;flex-direction:column}
+.phero{background:linear-gradient(160deg,var(--pk),var(--pu));padding:36px 20px 28px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ppic{width:84px;height:84px;border-radius:50%;border:4px solid white;background:white;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;margin-bottom:12px;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.ppic img{width:100%;height:100%;object-fit:cover}
+.pnm{font-size:21px;font-weight:700;color:white}
+.pem{font-size:13px;color:rgba(255,255,255,.8);margin-top:4px}
+.ppr{background:rgba(255,255,255,.2);border-radius:20px;padding:4px 14px;font-size:12px;color:white;margin-top:10px;display:inline-block}
+.pbdy{padding:18px;display:flex;flex-direction:column;gap:10px}
+.prow{background:white;border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.04);cursor:pointer}
+.pri{font-size:20px}.prt{flex:1}
+.prt strong{display:block;font-size:14px;color:#333}.prt span{font-size:12px;color:#aaa}
+.blo{width:100%;background:#fff0f6;border:2px solid var(--pkl);border-radius:30px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--pkm);margin-top:6px;transition:background .2s}
+.blo:active{background:var(--pkl)}
+/* SETTINGS */
+#settings{background:var(--bg);display:flex;flex-direction:column}
+.stbdy{padding:18px 18px 40px;display:flex;flex-direction:column;gap:14px}
+.strow{background:var(--pkl);border-radius:18px;padding:14px 18px;display:flex;align-items:center;gap:12px}
+.tgl{width:52px;height:28px;border-radius:14px;cursor:pointer;position:relative;border:none;transition:background .3s;flex-shrink:0}
+.tgl::after{content:'';position:absolute;top:4px;width:20px;height:20px;background:white;border-radius:50%;transition:left .3s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.tgl.on{background:var(--pkm)}.tgl.on::after{left:28px}.tgl.off{background:#ddd}.tgl.off::after{left:4px}
+.lsec{background:var(--pkl);border-radius:18px;padding:14px 18px}
+.ltit{color:#aaa;font-size:14px;text-align:center;margin-bottom:14px}
+.lflgs{display:flex;justify-content:space-around}
+.lflg{background:none;border:none;font-size:48px;cursor:pointer;position:relative;transition:transform .2s}
+.lflg.selected{transform:scale(1.18)}
+.lflg .ck{position:absolute;bottom:-4px;right:-4px;background:var(--pkm);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;color:white}
+/* SERVICES */
+#services{background:var(--bg);display:flex;flex-direction:column}
+.svgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 16px}
+.svc{border-radius:18px;padding:18px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.05);transition:transform .2s}
+.svc:active{transform:scale(.96)}.svi{font-size:36px}.svl{font-weight:700;font-size:12px;line-height:1.3}
+.sv-pu{background:var(--pul)}.sv-pu .svl{color:var(--pu)}.sv-pk{background:var(--pkl)}.sv-pk .svl{color:var(--pkm)}
+.tbtn2{margin:0 16px 22px;background:#c084fc;border:none;border-radius:18px;padding:14px 18px;color:white;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;text-align:left;transition:background .2s;width:calc(100% - 32px)}
+.tbtn2:active{background:var(--pu)}
+/* THANKYOU */
+#thankyou{background:linear-gradient(160deg,var(--pk),var(--pu));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.tyic{font-size:84px;margin-bottom:18px;animation:bounce 1s ease-in-out}
+#thankyou h2{font-size:32px;font-weight:700;color:white;margin-bottom:12px}
+#thankyou p{font-size:16px;color:rgba(255,255,255,.9);line-height:1.6;margin-bottom:40px}
+.bhome{background:white;color:var(--pkm);border:none;border-radius:30px;padding:15px 44px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit}
+#toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:white;padding:11px 22px;border-radius:22px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;z-index:500;white-space:nowrap;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#ibanner{position:fixed;bottom:74px;left:10px;right:10px;background:white;border-radius:16px;padding:12px 16px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:100;display:flex;align-items:center;gap:10px;border:2px solid var(--pkl);animation:su .4s ease}
+#ibanner.hidden{display:none}
+.itxt{flex:1}.itxt strong{display:block;font-size:13px;color:#333;margin-bottom:1px}.itxt span{font-size:11px;color:#888}
+.ibns{display:flex;gap:6px}
+.bins{background:linear-gradient(135deg,var(--pkm),var(--pu));color:white;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.bdis{background:#f5f0f0;color:#888;border:none;border-radius:10px;padding:7px 10px;font-size:12px;cursor:pointer}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+@keyframes bounce{0%,100%{transform:scale(1)}30%{transform:scale(1.2)}60%{transform:scale(.95)}}
+@keyframes su{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes dbc{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+<div id="lo"><div style="animation:float 2s ease-in-out infinite" id="llo"></div><div style="letter-spacing:12px;font-size:26px;font-weight:700;color:white;margin-top:8px">WËAR</div><div class="ldots"><span></span><span></span><span></span></div></div>
+<div id="app">
+
+<!-- SPLASH -->
+<div class="screen" id="splash">
+  <button class="gbtn" onclick="go('settings')">⚙️</button>
+  <div class="lw" id="spl"></div>
+  <div class="btxt">WËAR</div>
+  <div class="tpill" id="sptag">"Pásala, no la guardes"</div>
+  <button class="bstart" onclick="go('login')" id="spbtn">Únete</button>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="login">
+  <div class="atop"><div id="llo2"></div><div class="abrand">WËAR</div><div class="asub" id="lsub">"Pásala, no la guardes"</div></div>
+  <div class="acard">
+    <h2 id="ltit">Iniciar sesión</h2>
+    <div class="aerr" id="lerr"></div>
+    <div class="af"><label id="llem">Correo electrónico</label><input type="email" id="lem" placeholder="hola@ejemplo.com" autocomplete="email"/></div>
+    <div class="af"><label id="llps">Contraseña</label><input type="password" id="lps" placeholder="••••••••" autocomplete="current-password"/></div>
+    <div class="flnk"><a onclick="forgotPassword()" id="flnk">¿Olvidaste tu contraseña?</a></div>
+    <button class="bamain" id="blin" onclick="loginEmail()">Iniciar sesión</button>
+    <div class="adiv"><span id="ort">o continúa con</span></div>
+    <button class="bgoog" id="bgl" onclick="loginGoogle()">
+      <svg class="gi" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      <span id="bgt">Continuar con Google</span>
+    </button>
+    <div class="aswitch"><span id="nacc">¿No tienes cuenta? </span><a onclick="go('register')" id="greg">Regístrate</a></div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="screen" id="register">
+  <div class="atop"><div id="rlo"></div><div class="abrand">WËAR</div><div class="asub" id="rsub">"Pásala, no la guardes"</div></div>
+  <div class="acard">
+    <h2 id="rtit">Crear cuenta</h2>
+    <div class="aerr" id="rerr"></div>
+    <div class="af"><label id="rlnm">Nombre</label><input type="text" id="rnm" placeholder="Tu nombre" autocomplete="name"/></div>
+    <div class="af"><label id="rlem">Correo electrónico</label><input type="email" id="rem" placeholder="hola@ejemplo.com" autocomplete="email"/></div>
+    <div class="af"><label id="rlps">Contraseña</label><input type="password" id="rps" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/></div>
+    <button class="bamain" id="breg" onclick="registerEmail()">Crear cuenta</button>
+    <div class="adiv"><span id="ort2">o continúa con</span></div>
+    <button class="bgoog" id="bgl2" onclick="loginGoogle()">
+      <svg class="gi" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      <span id="bgt2">Continuar con Google</span>
+    </button>
+    <div class="aswitch"><span id="hacc">¿Ya tienes cuenta? </span><a onclick="go('login')" id="glin">Inicia sesión</a></div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="home">
+  <div class="hhdr">
+    <div class="htop">
+      <div class="hbrnd"><div id="hlo"></div><span>WËAR</span></div>
+      <div class="hrgt"><button class="hgear" onclick="go('settings')">⚙️</button><div class="uav" id="hav" onclick="go('profile')"></div></div>
+    </div>
+    <div class="sbar"><span style="color:#c084fc;font-size:16px">✦</span><input type="text" id="sinp" placeholder="Buscar prendas..." oninput="filterCards()"/></div>
+  </div>
+  <div class="htabs">
+    <button class="htab active" id="tab-all" onclick="setTab('all')">Todos</button>
+    <button class="htab" id="tab-sell" onclick="setTab('sell')">Venta</button>
+    <button class="htab" id="tab-donate" onclick="setTab('donate')">Donación</button>
+  </div>
+  <div class="grid" id="cgrid"></div>
+  <nav class="bnav">
+    <button class="nbtn active" onclick="go('home')" id="nav-home"><span class="ni">🏠</span><span class="nl" id="nl-home">Inicio</span></button>
+    <button class="nbtn inactive" onclick="go('sell')" id="nav-sell"><span class="ni">🏷️</span><span class="nl" id="nl-sell">Vender</span></button>
+    <button class="nbtn inactive" onclick="go('donate')" id="nav-donate"><span class="ni">💝</span><span class="nl" id="nl-donate">Donar</span></button>
+    <button class="nbtn inactive" onclick="go('mapscreen')" id="nav-map"><span class="ni">📍</span><span class="nl" id="nl-map">Mapa</span></button>
+    <button class="nbtn inactive" onclick="go('profile')" id="nav-profile"><span class="ni">👤</span><span class="nl" id="nl-profile">Perfil</span></button>
+  </nav>
+</div>
+
+<!-- SELL FORM -->
+<div class="screen" id="sell">
+  <div class="hbar"><button class="hbtn" onclick="go('home')">✕</button><button class="hbtn" style="color:#a78bfa" onclick="go('home')">↩</button><h1 id="stit">Publicar prenda</h1></div>
+  <div class="sbody">
+    <!-- Fotos -->
+    <div class="ssec">
+      <div class="sstit" id="sphlbl">📸 Fotos</div>
+      <div class="upz" onclick="document.getElementById('phi').click()">
+        <input type="file" id="phi" accept="image/*" multiple onchange="handlePhotos(event)" style="display:none"/>
+        <div class="upi">📸</div><div class="upt" id="upht">Toca para agregar fotos · máx. 6</div>
+      </div>
+      <div class="ipg" id="ipg"></div>
+    </div>
+    <!-- Info básica -->
+    <div class="ssec">
+      <div class="sstit" id="sinflbl">📋 Información</div>
+      <div class="fw"><label class="fl" id="sltit">Título del artículo *</label><input class="fi" id="s-tit" type="text" placeholder="Ej. Blazer camel talla M, poco uso"/></div>
+      <div class="fw"><label class="fl" id="sldsc">Descripción</label><textarea class="fta" id="s-dsc" placeholder="Describe el estado, material, medidas, por qué lo vendes..."></textarea></div>
+      <div class="frow">
+        <div class="fw"><label class="fl" id="slcat">Categoría</label>
+          <select class="fsel" id="s-cat">
+            <option value="">Seleccionar...</option>
+            <option>👗 Vestidos</option><option>🧥 Abrigos</option><option>👕 Tops / Blusas</option>
+            <option>👖 Pantalones</option><option>👟 Calzado</option><option>👜 Bolsas</option>
+            <option>🧣 Accesorios</option><option>🩱 Ropa interior</option><option>🧒 Infantil</option>
+          </select>
+        </div>
+        <div class="fw"><label class="fl" id="slbrd">Marca</label><input class="fi" id="s-brd" type="text" placeholder="Nike, Zara, H&amp;M..."/></div>
+      </div>
+    </div>
+    <!-- Estado -->
+    <div class="ssec">
+      <div class="sstit" id="scndlbl">✨ Estado de la prenda</div>
+      <div class="cpills">
+        <button class="cpill sel" onclick="selCond(this,'new')" id="cn-new">✨ Nuevo</button>
+        <button class="cpill" onclick="selCond(this,'likenew')" id="cn-lnew">🌟 Como nuevo</button>
+        <button class="cpill" onclick="selCond(this,'good')" id="cn-good">👍 Buen estado</button>
+        <button class="cpill" onclick="selCond(this,'used')" id="cn-used">🔄 Usado</button>
+      </div>
+    </div>
+    <!-- Talla y precio -->
+    <div class="ssec">
+      <div class="sstit" id="ssplbl">📏 Talla y Precio</div>
+      <div class="fw"><label class="fl" id="slsz">Talla</label>
+        <div class="schips">
+          <button class="sch" onclick="selSz(this,'XS')">XS</button>
+          <button class="sch" onclick="selSz(this,'S')">S</button>
+          <button class="sch sel" onclick="selSz(this,'M')">M</button>
+          <button class="sch" onclick="selSz(this,'L')">L</button>
+          <button class="sch" onclick="selSz(this,'XL')">XL</button>
+          <button class="sch" onclick="selSz(this,'XXL')">XXL</button>
+          <button class="sch" onclick="selSz(this,'Única')">Única</button>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fw"><label class="fl" id="slprc">Precio (MXN) *</label><input class="fi" id="s-prc" type="number" placeholder="0" min="0"/></div>
+        <div class="fw"><label class="fl" id="slclr">Color principal</label><input class="fi" id="s-clr" type="text" placeholder="Negro, azul..."/></div>
+      </div>
+      <div class="fw"><label class="fl" id="slloc">Ciudad / Ubicación</label><input class="fi" id="s-loc" type="text" placeholder="Cuernavaca, CDMX, Monterrey..."/></div>
+      <div class="fw"><label class="fl" id="slwspp">WhatsApp de contacto (opcional)</label><input class="fi" id="s-wspp" type="tel" placeholder="+52 55 1234 5678"/></div>
+    </div>
+    <button class="bpub" id="bpub" onclick="publishListing()">🏷️ Publicar ahora</button>
+  </div>
+</div>
+
+<!-- DONATE FORM -->
+<div class="screen" id="donate">
+  <div class="hbar"><button class="hbtn" onclick="go('home')">✕</button><button class="hbtn" style="color:#a78bfa" onclick="prevStep()">↩</button><h1 id="dtit">Donar Ropa</h1></div>
+  <div class="dbody">
+    <div class="pbar"><div class="ps done" id="p0"></div><div class="ps todo" id="p1"></div><div class="ps todo" id="p2"></div></div>
+    <div class="stit" id="dstit">Detalles</div>
+    <div id="dst0">
+      <div class="fw"><label class="fl" id="ldnm">Nombre / tipo de prenda</label><input class="fi" id="d-nm" type="text" placeholder="Ej. Suéter azul, blusa floral..."/></div>
+      <div class="fw"><label class="fl" id="lddc">Descripción breve</label><textarea class="fta" id="d-dc" placeholder="Tela, color, detalles relevantes..."></textarea></div>
+      <div class="fw"><label class="fl" id="ldct">Categoría</label>
+        <select class="fsel" id="d-ct">
+          <option value="">Seleccionar...</option>
+          <option>👗 Vestidos</option><option>🧥 Abrigos</option><option>👕 Tops</option>
+          <option>👖 Pantalones</option><option>👟 Calzado</option><option>👜 Bolsas</option>
+          <option>🧣 Accesorios</option><option>🧒 Infantil</option>
+        </select>
+      </div>
+    </div>
+    <div id="dst1" style="display:none">
+      <div class="fw"><label class="fl" id="ldsz">Talla</label><input class="fi" id="d-sz" type="text" placeholder="XS, S, M, L, XL, Única..."/></div>
+      <div class="fw"><label class="fl" id="ldqt">Cantidad de prendas</label><input class="fi" id="d-qt" type="number" placeholder="1" min="1"/></div>
+      <div class="fw"><label class="fl" id="ldcd">Estado de la prenda</label>
+        <select class="fsel" id="d-cd">
+          <option>✨ Nuevo / Sin usar</option>
+          <option>🌟 Como nuevo</option>
+          <option>👍 Buen estado</option>
+          <option>🔄 Usado, pero funcional</option>
+        </select>
+      </div>
+      <div class="fw"><label class="fl" id="ldcity">Tu ciudad</label><input class="fi" id="d-city" type="text" placeholder="Cuernavaca, CDMX..."/></div>
+    </div>
+    <div id="dst2" style="display:none"><div class="ccard" id="ccard"></div></div>
+    <button class="bprim" id="nxbtn" onclick="nextStep()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- MAP SCREEN -->
+<div class="screen" id="mapscreen">
+  <div class="hbar"><button class="hbtn" onclick="go('home')">✕</button><button class="hbtn" style="color:#a78bfa" onclick="go('home')">↩</button><h1 id="mptit">Puntos de donación</h1><button class="bapin" onclick="openAddPin()">＋ <span id="aplbl">Agregar</span></button></div>
+  <div class="mctrl">
+    <button class="mfbtn on" id="fdr" onclick="togFil('drop')">💜 <span id="fdrlbl">Buzones</span></button>
+    <button class="mfbtn on-pk" id="fst" onclick="togFil('store')">💗 <span id="fstlbl">Tiendas</span></button>
+  </div>
+  <!-- Mapa visual -->
+  <div class="mcon">
+    <div class="mbg" id="mpel">
+      <div class="mgh" style="top:20%"></div><div class="mgh" style="top:40%"></div>
+      <div class="mgh" style="top:60%"></div><div class="mgh" style="top:80%"></div>
+      <div class="mgv" style="left:25%"></div><div class="mgv" style="left:50%"></div><div class="mgv" style="left:75%"></div>
+      <div class="mslbl" style="top:17%;left:27%">Av. Insurgentes</div>
+      <div class="mslbl" style="top:52%;left:4%">Calle Morelos</div>
+      <div class="mslbl" style="top:73%;left:50%">Blvd. Juárez</div>
+      <div id="mpins"></div>
+    </div>
+  </div>
+  <!-- Lista de puntos -->
+  <div class="plist" id="plist"></div>
+</div>
+
+<!-- ADD PIN MODAL -->
+<div class="movl hidden" id="addpinmod">
+  <div class="msheet">
+    <div class="mhnd"></div>
+    <button class="mclose" onclick="closeAddPin()">✕</button>
+    <div class="mtit" id="modtit">Nuevo punto de donación</div>
+    <div class="ttog">
+      <button class="tbtn sp" id="tdbtn" onclick="selPinType('drop')"><span style="font-size:22px">📦</span><span id="tdlbl">Buzón / Centro</span></button>
+      <button class="tbtn" id="tsbtn" onclick="selPinType('store')"><span style="font-size:22px">🏪</span><span id="tslbl">Tienda WËAR</span></button>
+    </div>
+    <div class="fw"><label class="fl" id="pnlbl">Nombre del lugar *</label><input class="fi" id="p-nm" type="text" placeholder="Ej. Cruz Roja Cuernavaca"/></div>
+    <div class="fw"><label class="fl" id="pallbl">Dirección *</label><input class="fi" id="p-ad" type="text" placeholder="Calle, número, colonia"/></div>
+    <div class="fw"><label class="fl" id="phlbl">Horario de atención (opcional)</label><input class="fi" id="p-hr" type="text" placeholder="Lun–Vie 9am–6pm"/></div>
+    <div class="fw"><label class="fl" id="pcitylbl">Ciudad</label><input class="fi" id="p-cy" type="text" placeholder="Cuernavaca, CDMX..."/></div>
+    <button class="bmsave" onclick="savePin()" id="bsvpin">📍 Guardar punto</button>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div class="screen" id="detail">
+  <div class="hbar"><button class="hbtn" onclick="go('home')">✕</button><button class="hbtn" style="color:#a78bfa" onclick="go('home')">↩</button><h1 id="dscrtit">Artículo</h1></div>
+  <div class="dimg" id="dimg"></div>
+  <div class="dbdy">
+    <div class="dtit" id="dtitl"></div>
+    <div class="dprc" id="dprc"></div>
+    <div class="dslr" id="dslr"></div>
+    <div class="ddesc" id="ddesc"></div>
+    <div class="dtr" id="dtags"></div>
+    <button class="bcnt" id="bcnt">💬 Contactar vendedor</button>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="screen" id="profile">
+  <div class="hbar"><button class="hbtn" onclick="go('home')">✕</button><button class="hbtn" style="color:#a78bfa" onclick="go('home')">↩</button><h1 id="ptit">Mi perfil</h1></div>
+  <div class="phero"><div class="ppic" id="ppic"></div><div class="pnm" id="pnm">—</div><div class="pem" id="pem">—</div><div class="ppr" id="ppr">—</div></div>
+  <div class="pbdy">
+    <div class="prow" onclick="go('sell')"><div class="pri">🏷️</div><div class="prt"><strong id="myll">Mis publicaciones</strong><span id="myld">Ver lo que has publicado</span></div><span style="color:#ddd">›</span></div>
+    <div class="prow" onclick="go('donate')"><div class="pri">💝</div><div class="prt"><strong id="mydl">Mis donaciones</strong><span id="mydd">Ver artículos donados</span></div><span style="color:#ddd">›</span></div>
+    <div class="prow" onclick="go('mapscreen')"><div class="pri">📍</div><div class="prt"><strong id="mympl">Mis puntos marcados</strong><span id="mympd">Ver puntos que has agregado</span></div><span style="color:#ddd">›</span></div>
+    <div class="prow" onclick="go('settings')"><div class="pri">⚙️</div><div class="prt"><strong id="stgl">Configuración</strong><span id="stgd">Idioma y notificaciones</span></div><span style="color:#ddd">›</span></div>
+    <button class="blo" id="blo" onclick="logout()">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<div class="screen" id="services">
+  <div class="hbar"><button class="hbtn" onclick="go('home')">✕</button><button class="hbtn" style="color:#a78bfa" onclick="go('home')">↩</button><h1 id="svtit">Nuestros servicios</h1></div>
+  <div class="svgrid">
+    <div class="svc sv-pu" onclick="go('sell')"><div class="svi">🏷️</div><div class="svl" id="sv1">Vender ropa</div></div>
+    <div class="svc sv-pk" onclick="go('donate')"><div class="svi">💝</div><div class="svl" id="sv2">Donar prenda</div></div>
+    <div class="svc sv-pu" onclick="go('mapscreen')"><div class="svi">📍</div><div class="svl" id="sv3">Puntos de donación</div></div>
+    <div class="svc sv-pk"><div class="svi">💬</div><div class="svl" id="sv4">Contacto y quejas</div></div>
+  </div>
+  <button class="tbtn2" id="sv5">📜 Términos y políticas</button>
+</div>
+
+<!-- SETTINGS -->
+<div class="screen" id="settings">
+  <div class="hbar"><button class="hbtn" onclick="go('home')">✕</button><button class="hbtn" style="color:#a78bfa" onclick="go('home')">↩</button><h1 id="cfgtit">Configuración</h1></div>
+  <div class="stbdy">
+    <div class="strow"><span style="font-size:20px">🔔</span><span style="flex:1;color:#888;font-size:15px" id="cfgnt">Notificaciones</span><button class="tgl off" id="ntgl" onclick="togNot()"></button></div>
+    <div class="lsec">
+      <div class="ltit" id="cfglg">Idioma</div>
+      <div class="lflgs">
+        <button class="lflg selected" id="fes" onclick="setLang('es')">🇪🇸<span class="ck" id="ckes">✓</span></button>
+        <button class="lflg" id="fen" onclick="setLang('en')">🇬🇧<span class="ck" id="cken" style="display:none">✓</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THANK YOU -->
+<div class="screen" id="thankyou">
+  <div class="tyic">🌸</div>
+  <h2 id="tytit">¡Publicado! 🎉</h2>
+  <p id="tymsg">Tu artículo ya está visible para todos. ¡Buena suerte!</p>
+  <button class="bhome" onclick="go('home')" id="tybtn">Ver publicaciones</button>
+</div>
+
+<div id="ibanner" class="hidden">
+  <div>💝</div>
+  <div class="itxt"><strong>Instalar WËAR</strong><span id="idsc">Agrega la app a tu pantalla de inicio</span></div>
+  <div class="ibns"><button class="bins" onclick="installApp()">Instalar</button><button class="bdis" onclick="dismissInstall()">✕</button></div>
+</div>
+<div id="toast"></div>
+</div>
+
+<!-- FIREBASE v11.6.0 — proyecto wear-1fedc -->
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import{getAnalytics}from"https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
+import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,
+  signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,updateProfile,sendPasswordResetEmail
+}from"https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import{getFirestore,collection,addDoc,getDocs,query,orderBy,serverTimestamp,onSnapshot
+}from"https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import{getStorage,ref as storageRef,uploadBytesResumable,getDownloadURL
+}from"https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
+
+// Config completa del proyecto wear-1fedc (incluye databaseURL para Realtime DB)
+const cfg={
+  apiKey:            "AIzaSyC1mOI1kb4V9Ekr-NmYEhKODzNmpv0hiV4",
+  authDomain:        "wear-1fedc.firebaseapp.com",
+  databaseURL:       "https://wear-1fedc-default-rtdb.firebaseio.com",
+  projectId:         "wear-1fedc",
+  storageBucket:     "wear-1fedc.firebasestorage.app",
+  messagingSenderId: "1042554294640",
+  appId:             "1:1042554294640:web:a4a616b43f7b26bf613fb5",
+  measurementId:     "G-16N8B3CKLN"
+};
+const fapp=initializeApp(cfg);
+try{getAnalytics(fapp);}catch(e){console.log("Analytics no disponible");}
+const auth=getAuth(fapp),db=getFirestore(fapp),storage=getStorage(fapp),gp=new GoogleAuthProvider();
+gp.setCustomParameters({prompt:'select_account'});
+console.log("🔥 Firebase conectado — proyecto:",cfg.projectId);
+
+// Procesar resultado de redirect de Google (cuando la página recarga tras autenticarse)
+getRedirectResult(auth).then(result=>{
+  if(result?.user) console.log("✅ Google redirect auth OK:", result.user.email);
+}).catch(err=>{
+  if(err.code !== 'auth/null-user') console.warn("Redirect result error:", err.code);
+});
+
+window._fbAuth={
+  loginEmail:async()=>{
+    const e=document.getElementById('lem').value.trim(),p=document.getElementById('lps').value,
+          er=document.getElementById('lerr'),b=document.getElementById('blin');
+    er.classList.remove('show');
+    if(!e||!p){showErr(er,_t('fill'));return;}
+    b.disabled=true;b.textContent='...';
+    try{await signInWithEmailAndPassword(auth,e,p);}
+    catch(x){showErr(er,fbErr(x.code));b.disabled=false;b.textContent=_t('signin');}
+  },
+  registerEmail:async()=>{
+    const n=document.getElementById('rnm').value.trim(),e=document.getElementById('rem').value.trim(),
+          p=document.getElementById('rps').value,er=document.getElementById('rerr'),b=document.getElementById('breg');
+    er.classList.remove('show');
+    if(!n||!e||!p){showErr(er,_t('fill'));return;}
+    if(p.length<6){showErr(er,_t('short'));return;}
+    b.disabled=true;b.textContent='...';
+    try{const c=await createUserWithEmailAndPassword(auth,e,p);await updateProfile(c.user,{displayName:n});}
+    catch(x){showErr(er,fbErr(x.code));b.disabled=false;b.textContent=_t('creat');}
+  },
+  loginGoogle:async()=>{
+    ['bgl','bgl2'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=true;b.textContent='...⏳';}});
+    try{
+      // Intenta popup primero; si falla (iframe/PWA) usa redirect
+      await signInWithPopup(auth,gp);
+    }catch(x){
+      if(x.code==='auth/popup-blocked'||x.code==='auth/cancelled-popup-request'||x.code==='auth/popup-closed-by-user'){
+        // Popup bloqueado → usar redirect (recarga la página y vuelve autenticado)
+        try{await signInWithRedirect(auth,gp);}
+        catch(e2){showToast(fbErr(e2.code));}
+      } else {
+        showToast(fbErr(x.code));
+        ['bgl','bgl2'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=false;b.textContent='Google';}});
+      }
+    }
+  },
+  logout:async()=>await signOut(auth),
+  forgot:async()=>{
+    const e=document.getElementById('lem').value.trim();
+    if(!e){showToast(_t('entmail'));return;}
+    try{await sendPasswordResetEmail(auth,e);showToast(_t('rssent'));}
+    catch(x){showToast(fbErr(x.code));}
+  }
+};
+function showErr(el,m){el.textContent=m;el.classList.add('show');}
+
+// ── Subir una foto a Firebase Storage y devolver su URL de descarga ──
+async function uploadPhoto(base64DataUrl, listingId, index) {
+  // Convertir base64 → Blob
+  const res = await fetch(base64DataUrl);
+  const blob = await res.blob();
+  const ext = blob.type.split('/')[1] || 'jpg';
+  const path = `listings/${listingId}/photo_${index}.${ext}`;
+  const fileRef = storageRef(storage, path);
+  // Subir con progreso
+  await new Promise((resolve, reject) => {
+    const task = uploadBytesResumable(fileRef, blob, {contentType: blob.type});
+    task.on('state_changed',
+      snap => {
+        const pct = Math.round(snap.bytesTransferred/snap.totalBytes*100);
+        const btn = document.getElementById('bpub');
+        if(btn) btn.textContent = `Subiendo foto ${index+1}... ${pct}%`;
+      },
+      reject,
+      resolve
+    );
+  });
+  return await getDownloadURL(fileRef);
+}
+
+// ── Publicar listing: sube fotos a Storage, guarda URLs en Firestore ──
+window._pub = async (data) => {
+  const {photos, ...safeData} = data;
+  // 1. Crear doc en Firestore primero para obtener ID
+  const docRef = await addDoc(collection(db,'listings'), {
+    ...safeData,
+    photoURLs: [],
+    createdAt: serverTimestamp()
+  });
+  const listingId = docRef.id;
+  // 2. Subir fotos si las hay
+  if(photos && photos.length > 0) {
+    const btn = document.getElementById('bpub');
+    const urls = [];
+    for(let i=0; i<photos.length; i++) {
+      try {
+        const url = await uploadPhoto(photos[i], listingId, i);
+        urls.push(url);
+      } catch(e) {
+        console.warn('Error subiendo foto', i, e);
+      }
+    }
+    // 3. Actualizar doc con las URLs reales
+    if(urls.length > 0) {
+      const {updateDoc, doc} = await import("https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js");
+      await updateDoc(doc(db,'listings',listingId), {photoURLs: urls, coverURL: urls[0]});
+    }
+  }
+  return listingId;
+};
+
+window._pubDon = async (data) => {
+  await addDoc(collection(db,'donations'), {...data, createdAt: serverTimestamp()});
+};
+
+window._savPin = async (data) => {
+  const ref = await addDoc(collection(db,'mapPins'), {...data, createdAt: serverTimestamp()});
+  return ref.id;
+};
+
+window._loadPins = async () => {
+  const s = await getDocs(collection(db,'mapPins'));
+  return s.docs.map(d => ({id:d.id, ...d.data()}));
+};
+
+// ── onSnapshot: escucha en tiempo real — todos ven publicaciones nuevas al instante ──
+function startListingsListener() {
+  const q = query(collection(db,'listings'), orderBy('createdAt','desc'));
+  onSnapshot(q, (snap) => {
+    window._remoteListings = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    // Actualizar si estamos en home
+    if (window._cs === 'home') {
+      window._mergeAndRender();
+    }
+  }, (err) => {
+    console.warn('onSnapshot error:', err.code);
+    // Si falla por permisos, intenta carga estática
+    getDocs(query(collection(db,'listings'), orderBy('createdAt','desc')))
+      .then(s => { window._remoteListings = s.docs.map(d=>({id:d.id,...d.data()})); window._mergeAndRender(); })
+      .catch(()=>{});
+  });
+}
+window._startListener = startListingsListener;
+window._remoteListings = [];
+
+function hideOvl(){const o=document.getElementById('lo');if(o&&o.style.display!=='none'){o.classList.add('fo');setTimeout(()=>o.style.display='none',420);}}
+setTimeout(hideOvl,3000);
+
+onAuthStateChanged(auth,user=>{
+  hideOvl();
+  if(user){
+    window._cu=user;updProf(user);
+    if(['splash','login','register'].includes(window._cs)){
+      go('home');
+      // Arrancar listener de tiempo real (solo una vez)
+      if(!window._listenerStarted){
+        window._listenerStarted=true;
+        startListingsListener();
+      }
+      showToast(_t('wel')+' '+(user.displayName||user.email.split('@')[0])+' 🌸');
+    } else if(!window._listenerStarted){
+      // Ya estaba logueado (recarga de página), arrancar listener
+      window._listenerStarted=true;
+      startListingsListener();
+    }
+  }else{
+    window._cu=null;
+    if(!['splash','login','register','settings'].includes(window._cs))go('splash');
+  }
+});
+
+function updProf(u){
+  const mkav=(id,sm)=>{const el=document.getElementById(id);if(!el)return;el.innerHTML=u.photoURL?`<img src="${u.photoURL}"/>`:`<span style="font-weight:700;color:var(--pkm);font-size:${sm?15:26}px">${(u.displayName||u.email||'?')[0].toUpperCase()}</span>`;};
+  mkav('hav',true);mkav('ppic',false);
+  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  s('pnm',u.displayName||_t('noname'));s('pem',u.email||'');
+  s('ppr',u.providerData.map(p=>p.providerId).includes('google.com')?'🔵 Google':'📧 Email');
+}
+window._updProf=updProf;
+</script>
+
+<!-- APP LOGIC -->
+<script>
+let lang='es',notifOn=false,donStep=0,defPrm=null;
+let activeTab='all',showDrop=true,showStore=true,pinType='drop';
+let sCond='new',sSize='M',sPhotos=[];
+let mapPins=[],listings=[];
+window._cs='splash';window._cu=null;window._listenerStarted=false;
+
+const SEED=[
+  {id:'s1',type:'sell',title:'Gabardina camel talla M',desc:'Gabardina de temporada, usada solo 3 veces. Marca Zara, perfecto estado.',price:1500,size:'M',condition:'likenew',category:'🧥 Abrigos',brand:'Zara',color:'Camel',location:'Cuernavaca',emoji:'🧥',sellerName:'Ana G.',wspp:''},
+  {id:'s2',type:'sell',title:'Pantalón café + bolsa',desc:'Pantalón de cuero vegano H&M. Incluye bolsa de mano a juego.',price:1200,size:'M',condition:'good',category:'👖 Pantalones',brand:'H&M',color:'Café',location:'CDMX',emoji:'👜',sellerName:'Laura M.',wspp:''},
+  {id:'s3',type:'donate',title:'Vestido floral verano',desc:'Vestido de temporada primavera, talla S. En buen estado, regalo de cumpleaños que no usé.',price:0,size:'S',condition:'good',category:'👗 Vestidos',brand:'',color:'Floral',location:'Cuernavaca',emoji:'👗',sellerName:'Daniela R.',wspp:''},
+  {id:'s4',type:'sell',title:'Abrigo negro vintage',desc:'Abrigo de lana, corte vintage impecable. Comprado en tienda de segunda en NYC.',price:2000,size:'L',condition:'likenew',category:'🧥 Abrigos',brand:'Vintage',color:'Negro',location:'Guadalajara',emoji:'🧣',sellerName:'Sofía T.',wspp:''},
+  {id:'s5',type:'donate',title:'Blusa estampada talla S',desc:'Blusa ligera de verano, ideal para donar. Usada pocas veces.',price:0,size:'S',condition:'good',category:'👕 Tops / Blusas',brand:'',color:'Estampado',location:'Cuernavaca',emoji:'👚',sellerName:'María L.',wspp:''},
+  {id:'s6',type:'sell',title:'Jeans azul claro slim',desc:"Jeans clásicos slim fit Levi's talla 30. Sin desgaste visible.",price:950,size:'30',condition:'good',category:'👖 Pantalones',brand:"Levi's",color:'Azul',location:'Monterrey',emoji:'👖',sellerName:'Camila V.',wspp:''},
+];
+const SPINS=[
+  {id:'p1',type:'drop',name:'Cruz Roja Cuernavaca',address:'Av. Morelos Norte 214',hours:'Lun–Vie 9am–6pm',city:'Cuernavaca',left:'28%',top:'35%'},
+  {id:'p2',type:'store',name:'Tienda WËAR Centro',address:'Calle Guerrero 45, Col. Centro',hours:'Lun–Sáb 10am–8pm',city:'Cuernavaca',left:'55%',top:'25%'},
+  {id:'p3',type:'drop',name:'Parroquia San Juan',address:'Plaza Principal s/n, Tepoztlán',hours:'Dom 9am–1pm',city:'Tepoztlán',left:'70%',top:'55%'},
+  {id:'p4',type:'store',name:'Ropavejero Eco',address:'Blvd. Juárez 890, Vista Hermosa',hours:'Mar–Dom 11am–7pm',city:'Cuernavaca',left:'40%',top:'67%'},
+];
+
+const T={es:{
+  tag:'"Pásala, no la guardes"',join:'Únete',signin:'Iniciar sesión',creat:'Crear cuenta',
+  ltit:'Iniciar sesión',rtit:'Crear cuenta',lsub:'"Pásala, no la guardes"',rsub:'"Pásala, no la guardes"',
+  lem:'Correo electrónico',lps:'Contraseña',rnm:'Nombre',rem:'Correo electrónico',rps:'Contraseña',
+  forgot:'¿Olvidaste tu contraseña?',goog:'Continuar con Google',or:'o continúa con',
+  nacc:'¿No tienes cuenta? ',greg:'Regístrate',hacc:'¿Ya tienes cuenta? ',glin:'Inicia sesión',
+  fill:'Por favor llena todos los campos.',short:'Mínimo 6 caracteres.',entmail:'Escribe tu correo primero.',
+  rssent:'📧 Correo de recuperación enviado.',wel:'Bienvenida,',noname:'Usuario',srch:'Buscar prendas...',
+  tall:'Todos',tsell:'Venta',tdon:'Donación',
+  stit:'Publicar prenda',sphlbl:'📸 Fotos',upht:'Toca para agregar fotos · máx. 6',
+  sinflbl:'📋 Información',sltit:'Título del artículo *',sldsc:'Descripción',slcat:'Categoría',slbrd:'Marca',
+  scndlbl:'✨ Estado de la prenda',ssplbl:'📏 Talla y Precio',
+  slsz:'Talla',slprc:'Precio (MXN) *',slclr:'Color principal',slloc:'Ciudad / Ubicación',slwspp:'WhatsApp de contacto (opcional)',
+  bpub:'🏷️ Publicar ahora',
+  cnew:'✨ Nuevo',clnew:'🌟 Como nuevo',cgood:'👍 Buen estado',cused:'🔄 Usado',
+  dtit:'Donar Ropa',dst0:'Detalles',dst1:'Estado y cantidad',dst2:'Confirmar',
+  ldnm:'Nombre / tipo de prenda',lddc:'Descripción breve',ldct:'Categoría',
+  ldsz:'Talla',ldqt:'Cantidad de prendas',ldcd:'Estado de la prenda',ldcity:'Tu ciudad',
+  nxt:'Siguiente →',sub:'💝 Donar ahora',
+  mptit:'Puntos de donación',aplbl:'Agregar',fdrlbl:'Buzones',fstlbl:'Tiendas',
+  modtit:'Nuevo punto de donación',tdlbl:'Buzón / Centro',tslbl:'Tienda WËAR',
+  pnlbl:'Nombre del lugar *',pallbl:'Dirección *',phlbl:'Horario de atención (opcional)',pcitylbl:'Ciudad',bsvpin:'📍 Guardar punto',
+  ptit:'Mi perfil',myll:'Mis publicaciones',myld:'Ver lo que has publicado',
+  mydl:'Mis donaciones',mydd:'Ver artículos donados',
+  mympl:'Mis puntos marcados',mympd:'Ver puntos que has agregado',
+  stgl:'Configuración',stgd:'Idioma y notificaciones',blo:'Cerrar sesión',
+  tytit:'¡Listo! 🎉',tymsg:'Tu publicación ya es visible. ¡Mucha suerte!',tybtn:'Ver publicaciones',
+  idsc:'Agrega la app a tu pantalla de inicio',
+  nlhome:'Inicio',nlsell:'Vender',nldon:'Donar',nlmap:'Mapa',nlprof:'Perfil',
+  svtit:'Nuestros servicios',sv1:'Vender ropa',sv2:'Donar prenda',sv3:'Puntos de donación',sv4:'Contacto y quejas',sv5:'📜 Términos y políticas',
+  cfgtit:'Configuración',cfgnt:'Notificaciones',cfglg:'Idioma',free:'Gratis',contactBtn:'💬 Contactar vendedor',
+  'auth/invalid-email':'El correo no es válido.','auth/user-not-found':'No existe cuenta con ese correo.',
+  'auth/wrong-password':'Contraseña incorrecta.','auth/email-already-in-use':'Ese correo ya está registrado.',
+  'auth/weak-password':'Mínimo 6 caracteres.','auth/popup-closed-by-user':'Cancelaste el inicio.',
+  'auth/network-request-failed':'Sin conexión.','auth/invalid-credential':'Correo o contraseña incorrectos.',
+  'auth/too-many-requests':'Demasiados intentos. Intenta más tarde.',
+},en:{
+  tag:'"Pass it on, don\'t keep it"',join:'Join',signin:'Sign in',creat:'Create account',
+  ltit:'Sign in',rtit:'Create account',lsub:'"Pass it on, don\'t keep it"',rsub:'"Pass it on, don\'t keep it"',
+  lem:'Email address',lps:'Password',rnm:'Name',rem:'Email address',rps:'Password',
+  forgot:'Forgot your password?',goog:'Continue with Google',or:'or continue with',
+  nacc:'No account? ',greg:'Sign up',hacc:'Already have an account? ',glin:'Sign in',
+  fill:'Please fill in all fields.',short:'Min. 6 characters.',entmail:'Enter your email first.',
+  rssent:'📧 Reset email sent.',wel:'Welcome,',noname:'User',srch:'Search clothing...',
+  tall:'All',tsell:'For sale',tdon:'Donation',
+  stit:'List an item',sphlbl:'📸 Photos',upht:'Tap to add photos · max. 6',
+  sinflbl:'📋 Information',sltit:'Item title *',sldsc:'Description',slcat:'Category',slbrd:'Brand',
+  scndlbl:'✨ Item condition',ssplbl:'📏 Size & Price',
+  slsz:'Size',slprc:'Price (MXN) *',slclr:'Main color',slloc:'City / Location',slwspp:'WhatsApp contact (optional)',
+  bpub:'🏷️ Publish now',cnew:'✨ New',clnew:'🌟 Like new',cgood:'👍 Good condition',cused:'🔄 Used',
+  dtit:'Donate Clothing',dst0:'Details',dst1:'Condition & quantity',dst2:'Confirm',
+  ldnm:'Item name / type',lddc:'Brief description',ldct:'Category',
+  ldsz:'Size',ldqt:'Number of items',ldcd:'Item condition',ldcity:'Your city',
+  nxt:'Next →',sub:'💝 Donate now',
+  mptit:'Donation points',aplbl:'Add',fdrlbl:'Drop boxes',fstlbl:'Stores',
+  modtit:'New donation point',tdlbl:'Drop box / Center',tslbl:'WËAR Store',
+  pnlbl:'Place name *',pallbl:'Address *',phlbl:'Opening hours (optional)',pcitylbl:'City',bsvpin:'📍 Save point',
+  ptit:'My Profile',myll:'My listings',myld:'View what you\'ve published',
+  mydl:'My donations',mydd:'View donated items',
+  mympl:'My marked points',mympd:'View points you\'ve added',
+  stgl:'Settings',stgd:'Language & notifications',blo:'Sign out',
+  tytit:'Done! 🎉',tymsg:'Your listing is now visible. Good luck!',tybtn:'View listings',
+  idsc:'Add app to home screen',
+  nlhome:'Home',nlsell:'Sell',nldon:'Donate',nlmap:'Map',nlprof:'Profile',
+  svtit:'Our services',sv1:'Sell clothing',sv2:'Donate item',sv3:'Donation points',sv4:'Contact & complaints',sv5:'📜 Terms & policies',
+  cfgtit:'Configuration',cfgnt:'Notifications',cfglg:'Language',free:'Free',contactBtn:'💬 Contact seller',
+  'auth/invalid-email':'The email is not valid.','auth/user-not-found':'No account found with that email.',
+  'auth/wrong-password':'Incorrect password.','auth/email-already-in-use':'Email already registered.',
+  'auth/weak-password':'Min. 6 characters.','auth/popup-closed-by-user':'Sign in cancelled.',
+  'auth/network-request-failed':'No connection.','auth/invalid-credential':'Incorrect email or password.',
+  'auth/too-many-requests':'Too many attempts.',
+}};
+const _t=k=>T[lang][k]||k;
+window._t=_t;
+const fbErr=c=>T[lang][c]||T[lang]['auth/invalid-credential'];
+window.fbErr=fbErr;
+
+function logo(sz,col='white'){return `<svg width="${sz}" height="${sz}" viewBox="0 0 100 100" fill="none"><circle cx="38" cy="48" r="22" stroke="${col}" stroke-width="7" stroke-dasharray="18 6" stroke-linecap="round"/><circle cx="62" cy="48" r="22" stroke="${col}" stroke-width="7" stroke-dasharray="18 6" stroke-linecap="round"/><circle cx="78" cy="65" r="13" stroke="${col}" stroke-width="6" stroke-dasharray="11 4" stroke-linecap="round"/></svg>`;}
+
+function go(id){
+  const cur=document.getElementById(window._cs),nxt=document.getElementById(id);
+  if(!nxt||id===window._cs)return;
+  if(id==='home'){
+    loadCards();
+    // Arrancar listener en tiempo real si aún no está corriendo
+    if(window._cu && window._startListener && !window._listenerStarted){
+      window._listenerStarted=true;
+      window._startListener();
+    }
+  }
+  if(id==='mapscreen')loadPins();
+  cur.classList.add('exit-left');nxt.classList.add('active');
+  setTimeout(()=>cur.classList.remove('active','exit-left'),380);
+  window._cs=id;updNav(id);
+}
+window.go=go;
+
+function updNav(id){
+  ['home','sell','donate','map','profile'].forEach(k=>{
+    const nb=k==='map'?'nav-map':'nav-'+k;
+    const b=document.getElementById(nb);
+    if(b)b.className='nbtn '+(k===id||(k==='map'&&id==='mapscreen')?'active':'inactive');
+  });
+}
+
+function setLang(l){
+  lang=l;applyLang();
+  document.getElementById('ckes').style.display=l==='es'?'flex':'none';
+  document.getElementById('cken').style.display=l==='en'?'flex':'none';
+  document.getElementById('fes').className='lflg'+(l==='es'?' selected':'');
+  document.getElementById('fen').className='lflg'+(l==='en'?' selected':'');
+  loadCards();
+}
+window.setLang=setLang;
+
+function applyLang(){
+  const t=T[lang];
+  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  const ph=(id,v)=>{const el=document.getElementById(id);if(el)el.placeholder=v;};
+  s('sptag',t.tag);s('spbtn',t.join);s('lsub',t.lsub);s('ltit',t.ltit);s('rsub',t.rsub);s('rtit',t.rtit);
+  s('llem',t.lem);s('llps',t.lps);s('rlnm',t.rnm);s('rlem',t.rem);s('rlps',t.rps);
+  s('flnk',t.forgot);s('bgt',t.goog);s('bgt2',t.goog);s('ort',t.or);s('ort2',t.or);
+  s('nacc',t.nacc);s('greg',t.greg);s('hacc',t.hacc);s('glin',t.glin);
+  s('blin',t.signin);s('breg',t.creat);
+  ph('sinp',t.srch);
+  s('tab-all',t.tall);s('tab-sell',t.tsell);s('tab-donate',t.tdon);
+  s('stit',t.stit);s('sphlbl',t.sphlbl);s('upht',t.upht);
+  s('sinflbl',t.sinflbl);s('sltit',t.sltit);s('sldsc',t.sldsc);s('slcat',t.slcat);s('slbrd',t.slbrd);
+  s('scndlbl',t.scndlbl);s('ssplbl',t.ssplbl);s('slsz',t.slsz);s('slprc',t.slprc);
+  s('slclr',t.slclr);s('slloc',t.slloc);s('slwspp',t.slwspp);s('bpub',t.bpub);
+  s('cn-new',t.cnew);s('cn-lnew',t.clnew);s('cn-good',t.cgood);s('cn-used',t.cused);
+  s('dtit',t.dtit);s('ldnm',t.ldnm);s('lddc',t.lddc);s('ldct',t.ldct);
+  s('ldsz',t.ldsz);s('ldqt',t.ldqt);s('ldcd',t.ldcd);s('ldcity',t.ldcity);
+  s('mptit',t.mptit);s('aplbl',t.aplbl);s('fdrlbl',t.fdrlbl);s('fstlbl',t.fstlbl);
+  s('modtit',t.modtit);s('tdlbl',t.tdlbl);s('tslbl',t.tslbl);
+  s('pnlbl',t.pnlbl);s('pallbl',t.pallbl);s('phlbl',t.phlbl);s('pcitylbl',t.pcitylbl);s('bsvpin',t.bsvpin);
+  s('ptit',t.ptit);s('myll',t.myll);s('myld',t.myld);s('mydl',t.mydl);s('mydd',t.mydd);
+  s('mympl',t.mympl);s('mympd',t.mympd);s('stgl',t.stgl);s('stgd',t.stgd);s('blo',t.blo);
+  s('tytit',t.tytit);s('tymsg',t.tymsg);s('tybtn',t.tybtn);s('idsc',t.idsc);
+  s('nl-home',t.nlhome);s('nl-sell',t.nlsell);s('nl-donate',t.nldon);s('nl-map',t.nlmap);s('nl-profile',t.nlprof);
+  s('svtit',t.svtit);s('sv1',t.sv1);s('sv2',t.sv2);s('sv3',t.sv3);s('sv4',t.sv4);s('sv5',t.sv5);
+  s('cfgtit',t.cfgtit);s('cfgnt',t.cfgnt);s('cfglg',t.cfglg);s('bcnt',t.contactBtn);
+  updDonStep();
+  if(window._cu)window._updProf(window._cu);
+}
+
+// TABS
+function setTab(tab){
+  activeTab=tab;
+  ['all','sell','donate'].forEach(k=>document.getElementById('tab-'+k).className='htab'+(k===tab?' active':''));
+  renderCards(document.getElementById('sinp')?.value||'');
+}
+window.setTab=setTab;
+
+// CARDS
+// _mergeAndRender: combina SEED + publicaciones reales de Firestore
+window._mergeAndRender = function() {
+  renderCards(document.getElementById('sinp')?.value||'');
+};
+
+async function loadCards(){
+  // Arrancar listener si aún no corre (ej. si vuelven a home sin relogin)
+  if(window._startListener && window._remoteListings.length===0){
+    // Intentar carga estática rápida como fallback inicial
+    try{
+      if(window._loadPins){}  // no-op, solo checar que módulo cargó
+      const {getDocs:gd,query:q,collection:col,orderBy:ob,getFirestore:gf} = window._fbHelpers||{};
+    }catch(e){}
+  }
+  renderCards(document.getElementById('sinp')?.value||'');
+}
+function renderCards(q){
+  const g=document.getElementById('cgrid');if(!g)return;
+  // Combinar: publicaciones reales de Firestore + SEED de ejemplo (sin duplicar IDs)
+  const remote = window._remoteListings || [];
+  let data=[...remote, ...SEED.filter(s=>!remote.find(r=>r.id===s.id))];
+  // Guardar todos los items en caché para que openDetail los encuentre por ID
+  window._allItems = data;
+  if(activeTab==='sell')data=data.filter(l=>l.type==='sell');
+  if(activeTab==='donate')data=data.filter(l=>l.type==='donate');
+  if(q)data=data.filter(l=>(l.title||'').toLowerCase().includes(q.toLowerCase()));
+  const cols=['#fce7f3,#ede9fe','#ede9fe,#fce7f3','#fff0f6,#f3e8ff','#fce7f3,#e0e7ff','#ede9fe,#fff0f6','#fdf0ff,#fce7f3'];
+  g.innerHTML=!data.length?`<div style="grid-column:1/-1;text-align:center;color:#bbb;padding:40px 20px;font-size:14px">No hay prendas disponibles</div>`:
+  data.map((it,i)=>`<div class="card" onclick="openDetail('${it.id}')">
+    <div class="cimg" style="background:linear-gradient(135deg,${cols[i%6]});padding:0">
+      ${it.coverURL
+        ? `<img src="${it.coverURL}" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentElement.innerHTML='<span style=\"font-size:44px\">${it.emoji||'👗'}</span>'" loading="lazy"/>`
+        : `<span>${it.emoji||'👗'}</span>`
+      }
+      <div class="cbdg ${it.type==='sell'?'bsell':'bdon'}" style="position:absolute;top:8px;right:8px">${it.type==='sell'?(lang==='es'?'Venta':'Sale'):(lang==='es'?'Donación':'Donation')}</div>
+    </div>
+    <div class="cbdy">
+      <div class="ctit">${it.title||'—'}</div>
+      <div class="cftr">
+        <span class="cprc">${it.type==='sell'?'$'+(it.price||0):_t('free')}</span>
+        <div class="ctags">${it.size?`<span class="tag">${it.size}</span>`:''}</div>
+      </div>
+      <div class="cusr">@${(it.sellerName||'anon').split(' ')[0]} · ${it.location||''}</div>
+    </div>
+  </div>`).join('');
+}
+function filterCards(){renderCards(document.getElementById('sinp').value);}
+window.filterCards=filterCards;
+
+// DETAIL
+function openDetail(id){
+  // Buscar en cache global (más rápido y siempre actualizado)
+  const allItems=window._allItems||[...(window._remoteListings||[]),...SEED];
+  const it=allItems.find(l=>String(l.id)===String(id));
+  if(!it){ showToast('No se encontró el artículo'); return; }
+  const s=(el,v,html)=>{const e=document.getElementById(el);if(e)e[html?'innerHTML':'textContent']=v;};
+  s('dscrtit',it.category||'Artículo');
+  // Mostrar galería de fotos o emoji si no hay fotos
+  const dimgEl = document.getElementById('dimg');
+  if(it.photoURLs && it.photoURLs.length > 0){
+    let imgIdx = 0;
+    const buildGallery = (idx) => `
+      <img src="${it.photoURLs[idx]}" style="width:100%;height:100%;object-fit:cover;display:block"
+           onerror="this.src=''" loading="lazy"/>
+      ${it.photoURLs.length>1?`
+      <div style="position:absolute;bottom:10px;right:10px;display:flex;gap:6px;z-index:2">
+        <button onclick="event.stopPropagation();galleryPrev()" style="background:rgba(255,255,255,.8);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:14px">‹</button>
+        <button onclick="event.stopPropagation();galleryNext()" style="background:rgba(255,255,255,.8);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:14px">›</button>
+      </div>
+      <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.4);color:white;border-radius:10px;padding:2px 8px;font-size:11px">${idx+1}/${it.photoURLs.length}</div>`:''}`;
+    dimgEl.innerHTML = buildGallery(0);
+    dimgEl.style.position='relative';
+    window._galleryPhotos = it.photoURLs;
+    window._galleryIdx = 0;
+    window.galleryNext = () => {
+      window._galleryIdx = (window._galleryIdx+1) % window._galleryPhotos.length;
+      dimgEl.innerHTML = buildGallery(window._galleryIdx);
+    };
+    window.galleryPrev = () => {
+      window._galleryIdx = (window._galleryIdx-1+window._galleryPhotos.length) % window._galleryPhotos.length;
+      dimgEl.innerHTML = buildGallery(window._galleryIdx);
+    };
+  } else {
+    dimgEl.innerHTML = `<span>${it.emoji||'👗'}</span>`;
+    dimgEl.style.position='';
+  }
+  s('dtitl',it.title||'');
+  s('dprc',it.type==='sell'?'$'+(it.price||0):_t('free'));
+  s('dslr',`<div class="sav">${(it.sellerName||'?')[0]}</div><div class="si"><strong>${it.sellerName||'Anónimo'}</strong><span>${it.location||''}</span></div>`,true);
+  s('ddesc',it.desc||'');
+  s('dtags',[it.size&&`<span class="dtag">Talla ${it.size}</span>`,it.brand&&`<span class="dtag pk">${it.brand}</span>`,it.color&&`<span class="dtag">${it.color}</span>`,it.condition&&`<span class="dtag pk">${it.condition}</span>`].filter(Boolean).join(''),true);
+  const bcnt=document.getElementById('bcnt');
+  bcnt.onclick=it.wspp?()=>window.open(`https://wa.me/${it.wspp.replace(/\D/g,'')}`):()=>showToast('📞 '+_t('contactBtn'));
+  go('detail');
+}
+window.openDetail=openDetail;
+
+// SELL FORM
+function handlePhotos(e){
+  const f=Array.from(e.target.files),r=6-sPhotos.length;
+  f.slice(0,r).forEach(fi=>{const rd=new FileReader();rd.onload=ev=>{sPhotos.push(ev.target.result);renderPrev();};rd.readAsDataURL(fi);});
+}
+window.handlePhotos=handlePhotos;
+function renderPrev(){
+  const grid = document.getElementById('ipg');
+  grid.innerHTML = sPhotos.map((src,i)=>`
+    <div class="ith">
+      <img src="${src}" style="width:100%;height:100%;object-fit:cover"/>
+      <button class="di" onclick="rmPh(${i})">✕</button>
+      ${i===0?'<div style="position:absolute;bottom:3px;left:3px;background:var(--pkm);color:white;border-radius:6px;padding:1px 5px;font-size:9px;font-weight:700">Portada</div>':''}
+    </div>`).join('');
+  // Show count
+  const hint = document.getElementById('upht');
+  if(hint) hint.textContent = sPhotos.length>0 ? `${sPhotos.length} foto${sPhotos.length>1?'s':''} seleccionada${sPhotos.length>1?'s':''} · toca para agregar más` : 'Toca para agregar fotos · máx. 6';
+}
+function rmPh(i){sPhotos.splice(i,1);renderPrev();}window.rmPh=rmPh;
+function selCond(b,v){document.querySelectorAll('.cpill').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');sCond=v;}window.selCond=selCond;
+function selSz(b,v){document.querySelectorAll('.sch').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');sSize=v;}window.selSz=selSz;
+
+async function publishListing(){
+  const tit=document.getElementById('s-tit').value.trim(),prc=document.getElementById('s-prc').value;
+  const b=document.getElementById('bpub');
+  if(!tit){showToast('⚠️ El título es obligatorio');return;}
+  if(!prc){showToast('⚠️ El precio es obligatorio');return;}
+  if(!window._cu){showToast('⚠️ Debes iniciar sesión primero');return;}
+  b.disabled=true;b.textContent='Publicando...';
+
+  // Determinar emoji según categoría
+  const cat=document.getElementById('s-cat').value;
+  const emojiMap={'👗':'👗','🧥':'🧥','👕':'👕','👖':'👖','👟':'👟','👜':'👜','🧣':'🧣','🩱':'🩱','🧒':'🧒'};
+  const catEmoji=Object.entries(emojiMap).find(([k])=>cat.startsWith(k))?.[1]||'🏷️';
+
+  // ⚠️ NO incluir fotos en base64 — Firestore tiene límite de 1MB por documento
+  // Las fotos se guardan solo como vista previa local; para producción usar Firebase Storage
+  const data={
+    type:'sell',
+    title:tit,
+    desc:document.getElementById('s-dsc').value.trim(),
+    category:cat,
+    brand:document.getElementById('s-brd').value.trim(),
+    condition:sCond,
+    size:sSize,
+    price:Number(prc),
+    color:document.getElementById('s-clr').value.trim(),
+    location:document.getElementById('s-loc').value.trim(),
+    wspp:document.getElementById('s-wspp').value.trim(),
+    sellerName:window._cu.displayName||window._cu.email.split('@')[0],
+    sellerEmail:window._cu.email,
+    sellerUid:window._cu.uid,
+    emoji:catEmoji,
+    // photoURL: '' — sin fotos por ahora (requiere Firebase Storage)
+  };
+
+  try{
+    if(!window._pub){throw new Error('Firebase no listo. Recarga la página.');}
+    await window._pub(data);
+    // Limpiar formulario
+    ['s-tit','s-dsc','s-prc','s-brd','s-clr','s-loc','s-wspp'].forEach(id=>{
+      const el=document.getElementById(id);if(el)el.value='';
+    });
+    document.getElementById('s-cat').value='';
+    sPhotos=[];renderPrev();
+    b.disabled=false;b.textContent=_t('bpub');
+    // onSnapshot actualizará el feed automáticamente
+    go('thankyou');
+  }catch(e){
+    console.error('Publish error:',e);
+    b.disabled=false;b.textContent=_t('bpub');
+    showToast('❌ '+(e.message||'Error al publicar. Revisa tu conexión.'));
+  }
+}
+window.publishListing=publishListing;
+
+// DONATE FLOW
+function updDonStep(){
+  const t=T[lang],steps=[t.dst0,t.dst1,t.dst2];
+  const g=id=>document.getElementById(id);
+  if(g('dstit'))g('dstit').textContent=steps[donStep];
+  if(g('nxbtn'))g('nxbtn').textContent=donStep===2?t.sub:t.nxt;
+  ['p0','p1','p2'].forEach((id,i)=>{const el=g(id);if(el)el.className='ps '+(i<=donStep?'done':'todo');});
+  [0,1,2].forEach(i=>{const el=g('dst'+i);if(el)el.style.display=i===donStep?'block':'none';});
+  if(donStep===2){
+    const vals=[[t.ldnm,g('d-nm')?.value||'—'],[t.lddc,g('d-dc')?.value||'—'],[t.ldsz,g('d-sz')?.value||'—'],[t.ldqt,g('d-qt')?.value||'1'],[t.ldcd,g('d-cd')?.value||'—'],[t.ldcity,g('d-city')?.value||'—']];
+    const cc=g('ccard');if(cc)cc.innerHTML=vals.map(([k,v])=>`<div class="crow"><span class="ckey">${k}</span><span class="cval">${v}</span></div>`).join('');
+  }
+}
+async function nextStep(){
+  if(donStep<2){donStep++;updDonStep();}
+  else{
+    const data={type:'donate',title:document.getElementById('d-nm')?.value||'',desc:document.getElementById('d-dc')?.value||'',
+      category:document.getElementById('d-ct')?.value||'',size:document.getElementById('d-sz')?.value||'',
+      quantity:document.getElementById('d-qt')?.value||1,condition:document.getElementById('d-cd')?.value||'',
+      city:document.getElementById('d-city')?.value||'',
+      sellerName:window._cu?.displayName||'Anónimo',sellerUid:window._cu?.uid||'',price:0,emoji:'💝',location:''};
+    try{if(window._pubDon)await window._pubDon(data);}catch(e){}
+    donStep=0;updDonStep();go('thankyou');
+  }
+}
+function prevStep(){if(donStep>0){donStep--;updDonStep();}else go('home');}
+window.nextStep=nextStep;window.prevStep=prevStep;
+
+// MAP
+async function loadPins(){
+  try{if(window._loadPins){const r=await window._loadPins();if(r.length>0)mapPins=r;else mapPins=SPINS;}else mapPins=SPINS;}catch(e){mapPins=SPINS;}
+  renderMap();
+}
+function renderMap(){
+  const all=[...SPINS,...mapPins.filter(p=>!SPINS.find(s=>s.id===p.id))];
+  const vis=all.filter(p=>(p.type==='drop'&&showDrop)||(p.type==='store'&&showStore));
+  document.getElementById('mpins').innerHTML=vis.map(p=>`
+    <div class="mpin" style="left:${p.left||'50%'};top:${p.top||'50%'}" onclick="hlPin('${p.id}')">
+      <div class="pb pb-${p.type}">${p.type==='drop'?'📦':'🏪'}</div>
+      <div class="pt pt-${p.type}"></div>
+      <div class="plbl">${p.name}</div>
+    </div>`).join('');
+  document.getElementById('plist').innerHTML=vis.map(p=>`
+    <div class="pitm" onclick="hlPin('${p.id}')">
+      <div class="pio" style="background:${p.type==='drop'?'var(--pul)':'var(--pkl)'}">${p.type==='drop'?'📦':'🏪'}</div>
+      <div class="pin-i">
+        <div class="pnm">${p.name}</div>
+        <div class="pad">${p.address}${p.city?' · '+p.city:''}${p.hours?' · '+p.hours:''}</div>
+      </div>
+      <span class="pbdg ${p.type==='drop'?'bdrop':'bstore'}">${p.type==='drop'?(lang==='es'?'Buzón':'Drop'):(lang==='es'?'Tienda':'Store')}</span>
+    </div>`).join('');
+}
+function hlPin(id){
+  const p=[...SPINS,...mapPins].find(x=>x.id===id);
+  if(p)showToast(`📍 ${p.name}${p.hours?' · '+p.hours:''}`);
+}
+window.hlPin=hlPin;
+function togFil(t){
+  if(t==='drop'){showDrop=!showDrop;document.getElementById('fdr').className='mfbtn'+(showDrop?' on':'');}
+  else{showStore=!showStore;document.getElementById('fst').className='mfbtn'+(showStore?' on-pk':'');}
+  renderMap();
+}
+window.togFil=togFil;
+function openAddPin(){document.getElementById('addpinmod').classList.remove('hidden');}
+function closeAddPin(){document.getElementById('addpinmod').classList.add('hidden');}
+window.openAddPin=openAddPin;window.closeAddPin=closeAddPin;
+function selPinType(t){
+  pinType=t;
+  document.getElementById('tdbtn').className='tbtn'+(t==='drop'?' sp':'');
+  document.getElementById('tsbtn').className='tbtn'+(t==='store'?' spk':'');
+}
+window.selPinType=selPinType;
+async function savePin(){
+  const nm=document.getElementById('p-nm').value.trim(),ad=document.getElementById('p-ad').value.trim();
+  if(!nm||!ad){showToast('⚠️ Nombre y dirección son obligatorios');return;}
+  const pos=['20%,28%','35%,48%','60%,38%','75%,58%','50%,72%','25%,62%','82%,32%','45%,20%'];
+  const[l,tp]=pos[Math.floor(Math.random()*pos.length)].split(',');
+  const pin={type:pinType,name:nm,address:ad,hours:document.getElementById('p-hr').value,city:document.getElementById('p-cy').value,left:l,top:tp,addedBy:window._cu?.uid||'anon',addedByName:window._cu?.displayName||'Anónimo'};
+  try{
+    if(window._savPin)await window._savPin(pin);
+    mapPins.push({...pin,id:'lp-'+Date.now()});
+    renderMap();showToast('📍 Punto guardado. ¡Gracias por contribuir!');closeAddPin();
+    ['p-nm','p-ad','p-hr','p-cy'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  }catch(e){showToast('Error al guardar. Intenta de nuevo.');}
+}
+window.savePin=savePin;
+
+// MISC
+function togNot(){notifOn=!notifOn;document.getElementById('ntgl').className='tgl '+(notifOn?'on':'off');if(notifOn&&'Notification' in window)Notification.requestPermission();}
+window.togNot=togNot;
+function showToast(m,d=3500){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),d);}
+window.showToast=showToast;
+
+window.loginEmail=()=>window._fbAuth.loginEmail();
+window.registerEmail=()=>window._fbAuth.registerEmail();
+window.loginGoogle=()=>window._fbAuth.loginGoogle();
+window.logout=()=>window._fbAuth.logout();
+window.forgotPassword=()=>window._fbAuth.forgot();
+
+function installApp(){if(defPrm){defPrm.prompt();defPrm.userChoice.then(()=>{defPrm=null;dismissInstall();});}}
+function dismissInstall(){document.getElementById('ibanner').classList.add('hidden');localStorage.setItem('w-inst','1');}
+window.installApp=installApp;window.dismissInstall=dismissInstall;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();defPrm=e;if(!localStorage.getItem('w-inst'))setTimeout(()=>document.getElementById('ibanner').classList.remove('hidden'),3000);});
+window.addEventListener('appinstalled',dismissInstall);
+
+['lem','lps'].forEach(id=>document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')window.loginEmail();}));
+['rnm','rem','rps'].forEach(id=>document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')window.registerEmail();}));
+
+// INIT
+[['llo',90],['llo2',80],['spl',140],['rlo',80],['hlo',30]].forEach(([id,sz])=>{const el=document.getElementById(id);if(el)el.innerHTML=logo(sz);});
+document.getElementById('splash').classList.add('active');
+listings=SEED;renderCards('');mapPins=SPINS;
+applyLang();
+</script>
+</body>
+</html>
